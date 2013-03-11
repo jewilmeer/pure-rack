@@ -1,9 +1,18 @@
-app_proc = Proc.new { |env|  [200, {"Content-Type" => "text/html"}, [env.inspect]]}
+class TodoApp
+  def call(env)
+    request = Rack::Request.new env
 
-map '/' do
-  run app_proc
+    response = begin
+      case request.path
+
+      when '/version'
+        Rack::Response.new '0.1'
+      else
+        Rack::Response.new 'Hello Rack'
+      end
+    end
+    response.finish
+  end
 end
 
-map '/version' do
-  run Proc.new {|env| [200, {"Content-Type" => "text/html"}, ["Hello Rack 0.1"]] }
-end
+run TodoApp.new
